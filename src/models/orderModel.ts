@@ -46,6 +46,10 @@ export class Order extends Model {
         allowNull: false,
         defaultValue: OrderStatus.Pending, 
       },
+     paymentRef: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      }
     },
     {
       sequelize,
@@ -60,6 +64,7 @@ CarListing.hasMany(Order, { foreignKey: "carListingId", as: "orders" });
 
 Order.belongsTo(User, { foreignKey: "userId", as: "user" });
 User.hasMany(Order, { foreignKey: "userId", as: "orders" });
+
 
   
 export default Order;
