@@ -1,30 +1,17 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
 import sequelize from "../config/db"; // Import your database configuration
 // Define the User model
-class User extends Model {
+export class User extends Model {
   public id!: number; // Primary Key
   public firstname!: string;
   public lastname!: string;
   public email!: string;
   public gender!: string;
-  public state!: string;
-  public lga!: string;
   public address!: string;
-  public directoridnumber!: string;
-  public directordob!:string;
-  public directoraddress!: string;
-  public directorfirstname!: string;
-  public directorlastname!: string;
   public phonenumber!: string;
-  public directorstate!: string;
-  public directorlga!: string;
-  public idtype!: string;
   public password!: string;
-  public businessname!: string;
-  public businesscategory!: string;
-  public tinnumber!: string;
-  public bnnumber!: string;
-  public files!: string[]; // Store file names or paths
+  public role!: string;
+  public companyName?: string;
 }
 
 // Initialize the User model
@@ -55,35 +42,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    state: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lga: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     address: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directoridnumber: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directordob: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directoraddress: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directorfirstname: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directorlastname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -94,42 +53,19 @@ User.init(
         isNumeric: true,
       },
     },
-    directorstate: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    directorlga: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    idtype: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    businessname: {
-      type: DataTypes.STRING,
+    role: {
+      type: DataTypes.ENUM('user', 'dealer'),
       allowNull: false,
+      defaultValue: 'user'
     },
-    businesscategory: {
+    companyName: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    tinnumber: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    bnnumber: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    files: {
-      type: DataTypes.TEXT, // Array of file paths or names
-      allowNull: true,
-    },
+      allowNull: true
+    }
   },
   {
     sequelize,
