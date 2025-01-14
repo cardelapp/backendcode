@@ -7,8 +7,8 @@ import morgan from "morgan";
 import Log from "./utils/loggers";
 import Config from "./utils/config";
 import sequelize  from './config/db';
-//u have to import the model
-import './models/userModel'
+//Import the models
+import './models'
 // import authRoute from './routes/userRoutes';
 import bodyParser from 'body-parser';
 
@@ -46,5 +46,5 @@ Sentry.captureException(new Error("Manual test error from Sentry"))
 Sentry.setupExpressErrorHandler(app);
 app.listen(port, async() => {
   Log.success(`API is Alive and running 🚀 on port ${port}`);
-  await sequelize.sync({ alter: true });
+  await sequelize.sync({ alter: true });
 });
