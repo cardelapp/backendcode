@@ -7,6 +7,8 @@ import morgan from "morgan";
 import Log from "./utils/loggers";
 import Config from "./utils/config";
 import sequelize  from './config/db';
+//u have to import the model
+import './models/userModel'
 // import authRoute from './routes/userRoutes';
 import bodyParser from 'body-parser';
 
