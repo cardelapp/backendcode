@@ -4,7 +4,7 @@ import { Transmission, BodyStyle, Condition, FuelType, Status } from "../enums";
 import { User } from "."
 // Define the User model
 export class CarListing extends Model {
-    public id!: number; // Primary Key
+    public id!: string; // Primary Key
     public title!: string;
     public description!: string;
     public price!: number;
@@ -20,14 +20,14 @@ export class CarListing extends Model {
     public status!: Status;
     public transmission!: Transmission;
     public bodyStyle!: BodyStyle
-    public dealerId!: number;
+    public dealerId!: string;
 }
 
 // Initialize the User model
 CarListing.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         autoIncrement: true,
         primaryKey: true,
       },
@@ -93,7 +93,7 @@ CarListing.init(
         defaultValue: Status.Available,
       },
       dealerId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
           model: User,

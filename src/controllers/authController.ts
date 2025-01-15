@@ -328,7 +328,5 @@ user.phonenumber = phonenumber || user.phonenumber;
         return res.status(500).json({ message: "Internal Server Error." });
 
     }
-   
-
   }
 
