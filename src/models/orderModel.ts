@@ -4,9 +4,9 @@ import { OrderStatus } from "../enums";
 import { User, CarListing } from "."
 // Define the User model
 export class Order extends Model {
-    public orderId!: number;
-    public carListingId!: number; 
-    public userId!: number;
+    public orderId!: string;
+    public carListingId!: string; 
+    public userId!: string;
     public orderDate!: Date;
     public status!: OrderStatus;
   }
@@ -15,12 +15,12 @@ export class Order extends Model {
   Order.init(
     {
       orderId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         autoIncrement: true,
         primaryKey: true,
       },
       carListingId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
           model: CarListing,
@@ -28,7 +28,7 @@ export class Order extends Model {
         },
       },
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
           model: User,

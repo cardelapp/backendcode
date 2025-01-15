@@ -10,6 +10,7 @@ import sequelize  from './config/db';
 //Import the models
 import './models'
 import authRoute from './routes/userRoutes';
+import carListingRoute from './routes/carListingRoutes'
 import bodyParser from 'body-parser';
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 
  //use Routes for api 
 app.use('/auth',authRoute)
+app.use('/carlisting', carListingRoute)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });

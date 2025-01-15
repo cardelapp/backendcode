@@ -36,8 +36,6 @@ export const authenticateToken = (
     return;  // Stops further execution
   }
 };
-
-
   export const tokenpassword = (
     req: Request,
     res: Response,
@@ -59,7 +57,3 @@ export const authenticateToken = (
       return res.status(403).json({ message: "Invalid or expired token." });
     }
   };
-  
-
-
-

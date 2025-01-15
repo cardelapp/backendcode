@@ -13,3 +13,19 @@ export interface LoginRequestBody{
     email: string;
     password: string;
   };
+
+  export interface ListingRequestbodytype{
+    title?: string;
+    description?: string;
+    make?: string;
+    model?: string;
+    year?: string;
+    price?: string;
+    color?: string;
+    mileage?: string;
+    role?: string;
+}
+
+export interface ListingParamtype{
+  dealerId: string;
+}
