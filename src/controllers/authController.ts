@@ -17,7 +17,7 @@ export const register = async (
   next?: NextFunction
 ): Promise<Response> => {
   try {
-    const {firstname,lastname,email,gender,address,password} = req.body;
+    const {firstname,lastname,email,gender,address,password,phonenumber} = req.body;
     console.log(req.body)
   // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,6 +33,13 @@ export const register = async (
         "Password must be at least 8 characters long and include both letters and numbers.",
     });
   }
+  if(!phonenumber){
+    return res.status(400).json({
+      message:
+        "Phone number Field empty",
+    });
+
+  }
 
     // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
@@ -42,7 +49,7 @@ export const register = async (
     
     const hashedPassword = await bcrypt.hash(password, 10);
     // Proceed with registration logic (e.g., create a new user in the database)
-    const newUser = await User.create({firstname,lastname,email,gender,address,password:hashedPassword});
+    const newUser = await User.create({firstname,lastname,email,gender,address,phonenumber,password:hashedPassword});
     // Return success response
     return res.status(201).json({
         message: "User registered successfully.",

@@ -4,7 +4,7 @@ export interface Requestbodytype{
     email?: string;
     gender?: string;
    address?: string;
-     phonenumbe?: string;
+     phonenumber?: string;
     password?: string;
      role?: string;
     companyName?: string;
