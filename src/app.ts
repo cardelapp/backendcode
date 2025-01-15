@@ -9,7 +9,7 @@ import Config from "./utils/config";
 import sequelize  from './config/db';
 //Import the models
 import './models'
-// import authRoute from './routes/userRoutes';
+import authRoute from './routes/userRoutes';
 import bodyParser from 'body-parser';
 
 dotenv.config();
@@ -35,7 +35,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
   });
 
  //use Routes for api 
-// app.use('/auth',authRoute)
+app.use('/auth',authRoute)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });
