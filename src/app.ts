@@ -11,6 +11,7 @@ import sequelize  from './config/db';
 import './models'
 import authRoute from './routes/userRoutes';
 import carListingRoute from './routes/carListingRoutes'
+import uploadRoutes from './routes/uploadRoutes'
 import bodyParser from 'body-parser';
 
 dotenv.config();
@@ -26,7 +27,7 @@ app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 app.get("/health", (req: Request, res: Response) => {
   res.send(`Welcome to Cardel ${process.env.SERVER_NAME} Service`);
 });
@@ -38,6 +39,9 @@ app.get("/debug-sentry", function mainHandler(req, res) {
  //use Routes for api 
 app.use('/auth',authRoute)
 app.use('/carlisting', carListingRoute)
+app.use('/upload', uploadRoutes)
+app.use('/uploads', express.static('uploads'));
+
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });

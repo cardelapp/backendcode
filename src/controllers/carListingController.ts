@@ -12,12 +12,16 @@ export class CarListingController {
   // Create a new car listing using
   async createCarListing(req: Request, res: Response): Promise<void> {
     try {
-      const carListing = await CarListing.create(req.body);
-      res.status(201).json(carListing);
+      const dealerId = req.user.id; // Assuming user information is available in req.user
+      const payload = { ...req.body, dealerId }; // Merging req.body with dealerId
+  
+      const carListing = await CarListing.create(payload); // Using the payload to create the car listing
+      res.status(201).json(carListing); // Return the created car listing
     } catch (error) {
       res.status(500).json({ message: 'Error creating car listing', error });
     }
   }
+  
   //Edit an existing car listing using GenericCRUDUtil
   async editCarListing(req: Request, res: Response) {
     try {

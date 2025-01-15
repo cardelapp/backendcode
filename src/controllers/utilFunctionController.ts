@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { Model, FindOptions, WhereOptions } from 'sequelize';
 
+
 class GenericCRUDUtil {
   private model: any;
 
@@ -23,8 +24,8 @@ class GenericCRUDUtil {
 
   // Get All (Paginated)
   async getAll(req: Request, res: Response) {
+   
     const { page = 1, limit = 10, search = '{}', sort = 'createdAt', order = 'DESC' } = req.query;
-  
     const options: FindOptions = {
       limit: parseInt(limit as string),
       offset: (parseInt(page as string) - 1) * parseInt(limit as string),
@@ -45,6 +46,7 @@ class GenericCRUDUtil {
   
     try {
       const result = await this.model.findAndCountAll(options);
+     
       res.json({
         data: result.rows,
         total: result.count,
