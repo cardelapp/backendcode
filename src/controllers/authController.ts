@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { sendEmailPassword } from "../utils/sendEmail";
 import crypto from "crypto";
 import { VerifyTemplate } from "../utils/emailtemplate";
+import { where } from "sequelize";
 
 export const getuser=(req:Request,res:Response)=>{
     return res.status(201).json({message:'hello'})
@@ -65,6 +66,7 @@ export const register = async (
       return res.status(500).json({ message: "Internal Server Error." });
     }
   };
+  
   export const emailChecker = async (
     req: Request<{}, {}, Requestbodytype>,
     res: Response,
@@ -136,6 +138,53 @@ export const register = async (
       }
 
 }
+
+
+export const changeRole=async(req: Request<{}, {},Requestbodytype>,
+  res: Response
+): Promise<Response> => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is missing." });
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const currentRole = user.role;
+
+    let newRole: string;
+    if (currentRole === "user") {
+      newRole = "dealer";
+    } else if (currentRole === "dealer") {
+      newRole = "user";
+    } else {
+      return res.status(400).json({ message: "Invalid role." });
+    }
+
+    await User.update(
+      { role: newRole },
+      { where: { id: userId } }
+    );
+
+    return res.status(200).json({
+      message: `Role updated successfully to ${newRole}.`,
+      updatedRole: newRole,
+    });
+
+  } catch (error: any) {
+    console.error("Error changing role:", error);
+    return res.status(500).json({
+      message: "An error occurred while updating the role.",
+      error: error.message,
+    });
+  }
+};
 
 export const sendotp= async (req: Request, res: Response): Promise<Response> => {
     try {
