@@ -4,7 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 // Extend Request to include user
 interface AuthenticatedRequest extends Request {
   user?: {
-    id: string;
+    id:number;
     email: string;
   };
 }
@@ -25,7 +25,7 @@ export const authenticateToken = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as JwtPayload & {
-      id: string;
+      id: number;
       email: string;
     };
 

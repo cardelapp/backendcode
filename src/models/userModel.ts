@@ -1,8 +1,9 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db";
+
 // Define the User model
 export class User extends Model {
-  public id!: string; // Primary Key
+  public id!: number; // Primary Key (Now using number)
   public firstname!: string;
   public lastname!: string;
   public email!: string;
@@ -18,8 +19,8 @@ export class User extends Model {
 User.init(
   {
     id: {
-      type: DataTypes.STRING,
-      autoIncrement: true,
+      type: DataTypes.INTEGER, // Changed from STRING to INTEGER
+      autoIncrement: true, // Auto-increment for numeric type
       primaryKey: true,
     },
     firstname: {
@@ -74,4 +75,4 @@ User.init(
   }
 );
 
-export default User;
+export default User;
