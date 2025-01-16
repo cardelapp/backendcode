@@ -52,5 +52,5 @@ Sentry.captureException(new Error("Manual test error from Sentry"))
 Sentry.setupExpressErrorHandler(app);
 app.listen(port, async() => {
   Log.success(`API is Alive and running 🚀 on port ${port}`);
-  await sequelize.sync({ force: true });
+  await sequelize.sync({ alter: true });
 });
