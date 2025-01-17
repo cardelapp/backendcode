@@ -86,7 +86,7 @@ CarListing.init(
     },
     status: {
       type: DataTypes.ENUM,
-      values: ['Available', 'Sold'],
+      values: ['Available', 'Sold','Inactive'],
       allowNull: false,
       defaultValue: 'Available',
     },
