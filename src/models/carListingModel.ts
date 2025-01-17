@@ -77,8 +77,15 @@ CarListing.init(
       allowNull: false,
     },
     images: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
       allowNull: true,
+      get() {
+        const value = this.getDataValue('images');
+        return value ? JSON.parse(value) : [];
+      },
+      set(value: string[]) {
+        this.setDataValue('images', JSON.stringify(value));
+      },
     },
     location: {
       type: DataTypes.STRING,
