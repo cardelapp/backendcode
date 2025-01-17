@@ -1,45 +1,34 @@
+
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-// Extend Request to include user
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    email: string;
-  };
-}
-
 export const authenticateToken = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
-) => {  // Removed ': void'
+): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Access token missing or invalid." });
+    res.status(401).json({ message: "Access token missing or invalid." });
+    return;
   }
 
   const token = authHeader.split(" ")[1];
-  const jwtSecret = process.env.JWT_SECRET || "default_secret";
 
   try {
-    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as JwtPayload & {
+      id: number;
+      email: string;
+    };
 
-    if (typeof decoded === "object" && decoded.id && decoded.email) {
-      req.user = {
-        id: decoded.id as number,
-        email: decoded.email as string,
-      };
-      next();  // Proceed if token is valid
-    } else {
-      return res.status(403).json({ message: "Invalid token payload." });
-    }
+    req.user = { id: decoded.id, email: decoded.email };
+    next();
   } catch (error) {
-    console.error("Token verification failed:", error);
-    return res.status(403).json({ message: "Invalid or expired token." });
+    res.status(403).json({ message: "Invalid or expired token." });
   }
 };
+
 
   export const tokenpassword = (
     req: Request,

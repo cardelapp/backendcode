@@ -7,7 +7,7 @@ const router = express.Router();
 // Create a new car listing (dealers only)
 router.post(
   '/', 
-  (req: Request, res: Response,next:NextFunction)=>{authenticateToken(req,res,next)},
+  authenticateToken,
   checkDealerRole, 
   uploadCarImages,
   (req: Request, res: Response) => Uploadupdate(req, res)

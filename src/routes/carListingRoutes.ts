@@ -13,7 +13,7 @@ router.get('/getAllCars', (req: Request, res: Response) => {
 // Create a new car listing (dealers only)
 router.post(
   '/creatCarListings', 
-  (req: Request, res: Response,next:NextFunction)=>{authenticateToken(req,res,next)},
+authenticateToken,
   checkDealerRole, 
   (req: Request, res: Response) => carListingController.createCarListing(req, res)
 );

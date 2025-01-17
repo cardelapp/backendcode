@@ -1,3 +1,4 @@
+import { Request } from "express";
 export interface Requestbodytype{
      firstname?: string;
     lastname?: string;
@@ -29,3 +30,5 @@ export interface LoginRequestBody{
 export interface ListingParamtype{
   dealerId: string;
 }
+
+

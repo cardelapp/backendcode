@@ -4,6 +4,6 @@ import { authenticateToken } from "../middleware/authmiddleware";
 
 const router: Router = express.Router();
 
-router.post('/payments/initiate', (req: Request, res: Response,next:NextFunction)=>{authenticateToken(req,res,next)}, initiatePayment); // Initiate payment
+router.post('/payments/initiate', authenticateToken, initiatePayment); // Initiate payment
 
 export default router;

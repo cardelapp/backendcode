@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: node_app
+    restart: always
+    ports:
+      - "3000:${PORT}"  # Maps container port 3000 to the port in .env
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_ADDRESS: ${EMAIL_ADDRESS}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_PORT: ${SMTP_PORT}
+      PAYSTACK_SECRET_KEY: ${PAYSTACK_SECRET_KEY}
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:${DB_PORT}"
+    volumes:
+      - mysql_data:/var/lib/mysql  # Ensure volume is defined
+
+volumes:
+  mysql_data: {}  # Correct volume definition

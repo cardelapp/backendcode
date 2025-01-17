@@ -10,9 +10,9 @@ router.get('/',(req: Request, res: Response)=>{
 router.post('/emailchecker',(req: Request, res: Response)=>{emailChecker(req,res)})
 
 router.post ('/changerole',
-    (req: Request, res: Response,next:NextFunction)=>{authenticateToken(req,res,next)},
-    (req: Request, res: Response)=>{changeRole(req,res)})
-    
+    authenticateToken,
+    (req:Request, res: Response, next: NextFunction) =>{changeRole(req,res)})
+
 router.post('/register',(req: Request, res: Response)=>{register(req,res)})
 
 router.post('/sendotp',(req: Request, res: Response)=>{sendotp(req,res)})

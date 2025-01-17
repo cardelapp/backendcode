@@ -12,7 +12,7 @@ export class CarListingController {
   // Create a new car listing using
   async createCarListing(req: Request, res: Response): Promise<void> {
     try {
-      const dealerId = req.user.id; // Assuming user information is available in req.user
+      const dealerId = req.user?.id; // Assuming user information is available in req.user
       console.log(dealerId)
       const payload = { ...req.body, dealerId }; // Merging req.body with dealerId
   
