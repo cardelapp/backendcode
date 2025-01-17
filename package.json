@@ -4,10 +4,10 @@
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "mkdir -p public && tsc --outDir public",
+        "build": "tsc --outDir public",
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-        "start": "node dist/app.js"
+        "start": "node public/app.js"
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
