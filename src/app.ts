@@ -13,6 +13,7 @@ import authRoute from './routes/userRoutes';
 import carListingRoute from './routes/carListingRoutes'
 import uploadRoutes from './routes/uploadRoutes'
 import bodyParser from 'body-parser';
+import ServerlessHttp from "serverless-http";
 
 dotenv.config();
 const app = express();
@@ -52,3 +53,4 @@ app.listen(port, async() => {
   Log.success(`API is Alive and running 🚀 on port ${port}`);
   await sequelize.sync({ alter: false });
 });
+export const handler = ServerlessHttp(app);
