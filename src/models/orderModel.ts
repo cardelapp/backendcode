@@ -1,18 +1,17 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db";
 import { OrderStatus } from "../enums";
 import { User, CarListing } from ".";
 
 export class Order extends Model {
   public orderId!: number;
-  public carListingId!: number; 
+  public carListingId!: number;
   public userId!: number;
   public orderDate!: Date;
   public status!: OrderStatus;
   public paymentRef!: string;
 }
 
-// Initialize the Order model
 Order.init(
   {
     orderId: {
@@ -24,19 +23,19 @@ Order.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: CarListing,
+        model: CarListing, 
         key: "id",
       },
-      onDelete: "CASCADE",  // Optional: Deletes orders if car listing is deleted
+      onDelete: "CASCADE",
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User,
+        model: User, 
         key: "id",
       },
-      onDelete: "CASCADE",  // Optional: Deletes orders if user is deleted
+      onDelete: "CASCADE",
     },
     orderDate: {
       type: DataTypes.DATE,
@@ -44,8 +43,7 @@ Order.init(
       defaultValue: DataTypes.NOW,
     },
     status: {
-      type: DataTypes.ENUM,
-      values: Object.values(OrderStatus),
+      type: DataTypes.ENUM(...Object.values(OrderStatus)),  // Spread ENUM values
       allowNull: false,
       defaultValue: OrderStatus.Pending,
     },
@@ -61,7 +59,6 @@ Order.init(
   }
 );
 
-// Associations
 Order.belongsTo(CarListing, { foreignKey: "carListingId", as: "carListing" });
 CarListing.hasMany(Order, { foreignKey: "carListingId", as: "orders" });
 

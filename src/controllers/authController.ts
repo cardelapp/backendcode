@@ -7,6 +7,7 @@ import { sendEmailPassword } from "../utils/sendEmail";
 import crypto from "crypto";
 import { VerifyTemplate } from "../utils/emailtemplate";
 import { where } from "sequelize";
+import Log from "../utils/loggers";
 
 export const getuser=(req:Request,res:Response)=>{
     return res.status(201).json({message:'hello'})
@@ -112,7 +113,7 @@ export const register = async (
         if (!isPasswordValid) {
           return res.status(401).json({ message: "Invalid email or password." });
         }
-    
+        Log.info(user.id)
         // Generate a JWT token
         
         const token = jwt.sign(

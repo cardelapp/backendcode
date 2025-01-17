@@ -13,6 +13,7 @@ export class CarListingController {
   async createCarListing(req: Request, res: Response): Promise<void> {
     try {
       const dealerId = req.user.id; // Assuming user information is available in req.user
+      console.log(dealerId)
       const payload = { ...req.body, dealerId }; // Merging req.body with dealerId
   
       const carListing = await CarListing.create(payload); // Using the payload to create the car listing
