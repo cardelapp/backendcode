@@ -10,6 +10,11 @@ export interface Requestbodytype{
      role?: string;
     companyName?: string;
 }
+
+export interface DealerRequestbodytype{
+ companyName: string;
+}
+
 export interface LoginRequestBody{
     email: string;
     password: string;
@@ -20,10 +25,10 @@ export interface LoginRequestBody{
     description?: string;
     make?: string;
     model?: string;
-    year?: string;
-    price?: string;
+    year?: number;
+    price?: number;
     color?: string;
-    mileage?: string;
+    mileage?: number;
     role?: string;
 }
 

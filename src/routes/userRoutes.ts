@@ -1,5 +1,5 @@
 import express, { NextFunction, Request,Response } from "express";
-import { changeRole, emailChecker, forgotPassword, getuser, login, register, sendotp, verifyopt, verifypassword } from "../controllers/authController";
+import { changeRole, emailChecker, forgotPassword, getuser, login, register, sendotp, verifyopt, verifypassword, registerDealer } from "../controllers/authController";
 import { authenticateToken, tokenpassword } from "../middleware/authmiddleware";
 const router=express.Router();
 
@@ -14,6 +14,7 @@ router.post ('/changerole',
     (req:Request, res: Response, next: NextFunction) =>{changeRole(req,res)})
 
 router.post('/register',(req: Request, res: Response)=>{register(req,res)})
+router.post('/registerDealer', authenticateToken,(req: Request, res: Response)=>{registerDealer(req,res)})
 
 router.post('/sendotp',(req: Request, res: Response)=>{sendotp(req,res)})
 
