@@ -23,19 +23,17 @@ Order.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: CarListing, 
+        model: CarListing,
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User, 
+        model: User,
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     orderDate: {
       type: DataTypes.DATE,
@@ -43,7 +41,7 @@ Order.init(
       defaultValue: DataTypes.NOW,
     },
     status: {
-      type: DataTypes.ENUM(...Object.values(OrderStatus)),  // Spread ENUM values
+      type: DataTypes.ENUM(...Object.values(OrderStatus)),  // Correct ENUM spread
       allowNull: false,
       defaultValue: OrderStatus.Pending,
     },
@@ -59,6 +57,7 @@ Order.init(
   }
 );
 
+// Define Relationships
 Order.belongsTo(CarListing, { foreignKey: "carListingId", as: "carListing" });
 CarListing.hasMany(Order, { foreignKey: "carListingId", as: "orders" });
 
