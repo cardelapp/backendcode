@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 router.post('/emailchecker', (req, res) => { (0, authController_1.emailChecker)(req, res); });
 router.post('/changerole', authmiddleware_1.authenticateToken, (req, res, next) => { (0, authController_1.changeRole)(req, res); });
 router.post('/register', (req, res) => { (0, authController_1.register)(req, res); });
+router.post('/registerDealer', authmiddleware_1.authenticateToken, (req, res) => { (0, authController_1.registerDealer)(req, res); });
 router.post('/sendotp', (req, res) => { (0, authController_1.sendotp)(req, res); });
 router.post('/verifyotp', (req, res, next) => { (0, authmiddleware_1.tokenpassword)(req, res, next); }, (req, res) => { (0, authController_1.verifyopt)(req, res); });
 router.post('/forgotpaswword', (req, res) => { (0, authController_1.forgotPassword)(req, res); });

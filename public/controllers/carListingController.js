@@ -24,8 +24,7 @@ class CarListingController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                const dealerId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id; // Assuming user information is available in req.user
-                console.log(dealerId);
+                const dealerId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
                 const payload = Object.assign(Object.assign({}, req.body), { dealerId }); // Merging req.body with dealerId
                 const carListing = yield models_1.CarListing.create(payload); // Using the payload to create the car listing
                 res.status(201).json(carListing); // Return the created car listing
@@ -40,13 +39,15 @@ class CarListingController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = req.user.id;
-                const carListing = yield models_1.CarListing.findByPk(id);
+                const carId = parseInt(req.params.carId);
+                const carListing = yield models_1.CarListing.findOne({ where: { dealerId: id, id: carId } });
                 if (!carListing) {
-                    return res.status(404).json({ success: false, message: "Car listing not found" });
+                    res.status(404).json({ success: false, message: "Car listing not found" });
+                    return;
                 }
                 // Use the updateById method from GenericCRUDUtil
-                const carUpdate = this.crudUtil.updateById(req, res);
-                res.status(201).json(carUpdate);
+                this.crudUtil.updateById(req.body, carListing.id);
+                res.status(201).json({ message: `car listing with id ${carId} updated succeesfully` });
             }
             catch (error) {
                 console.error(error);
@@ -58,13 +59,16 @@ class CarListingController {
     deleteCarListing(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { id } = req.params;
-                const carListing = yield models_1.CarListing.findByPk(id);
+                const dealerId = req.user.id;
+                const carId = parseInt(req.params.carId);
+                const carListing = yield models_1.CarListing.findOne({ where: { dealerId: dealerId, id: carId } });
                 if (!carListing) {
-                    return res.status(404).json({ success: false, message: "Car listing not found" });
+                    res.status(404).json({ success: false, message: "Car listing not found" });
+                    return;
                 }
                 // Use the deleteById method from GenericCRUDUtil
-                return this.crudUtil.deleteById(req, res);
+                this.crudUtil.deleteById(dealerId, carListing.id);
+                res.status(200).json({ message: `Car listing with id ${carId} deleted successfully` });
             }
             catch (error) {
                 console.error(error);

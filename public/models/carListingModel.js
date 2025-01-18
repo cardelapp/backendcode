@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarListing = void 0;
 const sequelize_1 = require("sequelize");
 const db_1 = __importDefault(require("../config/db"));
-const userModel_1 = require("./userModel"); // Import the User model
+const userModel_1 = require("./userModel");
 class CarListing extends sequelize_1.Model {
 }
 exports.CarListing = CarListing;
@@ -45,13 +45,11 @@ CarListing.init({
         allowNull: true,
     },
     fuelType: {
-        type: sequelize_1.DataTypes.ENUM,
-        values: ['Petrol', 'Diesel', 'Electric'],
+        type: sequelize_1.DataTypes.ENUM('Petrol', 'Diesel', 'Electric'), // ENUM kept
         allowNull: false,
     },
     transmission: {
-        type: sequelize_1.DataTypes.ENUM,
-        values: ['Automatic', 'Manual'],
+        type: sequelize_1.DataTypes.ENUM('Automatic', 'Manual'), // ENUM kept
         allowNull: false,
     },
     color: {
@@ -59,8 +57,7 @@ CarListing.init({
         allowNull: true,
     },
     condition: {
-        type: sequelize_1.DataTypes.ENUM,
-        values: ['New', 'Used', 'Refurbished'],
+        type: sequelize_1.DataTypes.ENUM('New', 'Used', 'Refurbished'), // ENUM kept
         allowNull: false,
     },
     images: {
@@ -79,8 +76,7 @@ CarListing.init({
         allowNull: false,
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM,
-        values: ['Available', 'Sold', 'Inactive'],
+        type: sequelize_1.DataTypes.ENUM('Available', 'Sold', 'Inactive'), // ENUM kept
         allowNull: false,
         defaultValue: 'Available',
     },
@@ -91,14 +87,13 @@ CarListing.init({
             model: userModel_1.User,
             key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
     },
 }, {
     sequelize: db_1.default,
     tableName: "carListings",
     timestamps: true,
 });
+// Define Associations
 CarListing.belongsTo(userModel_1.User, { foreignKey: "dealerId", as: "dealer" });
 userModel_1.User.hasMany(CarListing, { foreignKey: "dealerId", as: "carListings" });
 exports.default = CarListing;

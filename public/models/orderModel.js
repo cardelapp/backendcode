@@ -24,7 +24,6 @@ Order.init({
             model: _1.CarListing,
             key: "id",
         },
-        onDelete: "CASCADE",
     },
     userId: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -33,7 +32,6 @@ Order.init({
             model: _1.User,
             key: "id",
         },
-        onDelete: "CASCADE",
     },
     orderDate: {
         type: sequelize_1.DataTypes.DATE,
@@ -41,7 +39,7 @@ Order.init({
         defaultValue: sequelize_1.DataTypes.NOW,
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM(...Object.values(enums_1.OrderStatus)), // Spread ENUM values
+        type: sequelize_1.DataTypes.ENUM(...Object.values(enums_1.OrderStatus)), // Correct ENUM spread
         allowNull: false,
         defaultValue: enums_1.OrderStatus.Pending,
     },
@@ -54,6 +52,7 @@ Order.init({
     tableName: "orders",
     timestamps: true,
 });
+// Define Relationships
 Order.belongsTo(_1.CarListing, { foreignKey: "carListingId", as: "carListing" });
 _1.CarListing.hasMany(Order, { foreignKey: "carListingId", as: "orders" });
 Order.belongsTo(_1.User, { foreignKey: "userId", as: "user" });
