@@ -12,6 +12,12 @@ const router = express_1.default.Router();
 router.get('/getAllCars', (req, res) => {
     carListingController_1.carListingController.getAllCars(req, res);
 });
+// search car listings (public)
+router.get('/searchCars', (req, res) => {
+    carListingController_1.carListingController.searchCars(req, res);
+});
 // Create a new car listing (dealers only)
 router.post('/creatCarListings', middleware_1.authenticateToken, usermiddleware_1.checkDealerRole, (req, res) => carListingController_1.carListingController.createCarListing(req, res));
+router.post('/editCarListing/:carId', middleware_1.authenticateToken, usermiddleware_1.checkDealerRole, (req, res) => carListingController_1.carListingController.editCarListing(req, res));
+router.post('/deleteCarListing/:carId', middleware_1.authenticateToken, usermiddleware_1.checkDealerRole, (req, res) => carListingController_1.carListingController.deleteCarListing(req, res));
 exports.default = router;

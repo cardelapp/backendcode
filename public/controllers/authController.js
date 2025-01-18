@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifypassword = exports.forgotPassword = exports.updateuser = exports.selectuserid = exports.verifyopt = exports.sendotp = exports.changeRole = exports.login = exports.emailChecker = exports.register = exports.getuser = void 0;
+exports.verifypassword = exports.forgotPassword = exports.updateuser = exports.selectuserid = exports.verifyopt = exports.sendotp = exports.changeRole = exports.login = exports.emailChecker = exports.registerDealer = exports.register = exports.getuser = void 0;
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -27,7 +27,6 @@ exports.getuser = getuser;
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { firstname, lastname, email, gender, address, password, phonenumber } = req.body;
-        console.log(req.body);
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -70,6 +69,31 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.register = register;
+const registerDealer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { companyName } = req.body;
+        if (!companyName) {
+            return res.status(400).json({ message: "Company name is required" });
+        }
+        const userId = req.user.id;
+        const user = yield userModel_1.default.findOne({ where: { id: userId } });
+        if (!user) {
+            return res.status(400).json({ message: "Please sign up to register" });
+        }
+        if (user.companyName) {
+            return res.status(400).json({ message: "User already registered as a dealer" });
+        }
+        user.companyName = companyName;
+        user.role = "dealer";
+        yield user.save();
+        return res.status(200).json({ message: "Dealer registration successful" });
+    }
+    catch (error) {
+        console.error("Error encountered during registration", error.message || error);
+        return res.status(500).json({ message: "Internal server error occured." });
+    }
+});
+exports.registerDealer = registerDealer;
 const emailChecker = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.body;
@@ -146,6 +170,10 @@ const changeRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const currentRole = user.role;
         let newRole;
         if (currentRole === "user") {
+            if (!user.companyName) {
+                return res.status(400).json({ message: "Complete your registration as a dealer." });
+            }
+            ;
             newRole = "dealer";
         }
         else if (currentRole === "dealer") {
@@ -154,7 +182,8 @@ const changeRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         else {
             return res.status(400).json({ message: "Invalid role." });
         }
-        yield userModel_1.default.update({ role: newRole }, { where: { id: userId } });
+        user.role = newRole;
+        yield user.save();
         return res.status(200).json({
             message: `Role updated successfully to ${newRole}.`,
             updatedRole: newRole,
