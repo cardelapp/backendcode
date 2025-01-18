@@ -75,33 +75,29 @@ class GenericCRUDUtil {
   }
 
   // Update By ID
-  async updateById(req: Request, res: Response) {
-    const { id } = req.params;
-
+  async updateById<T>(reqBody:Partial<T>, id: number) {
     try {
-      const [updated] = await this.model.update(req.body, { where: { id } });
+      const [updated] = await this.model.update(reqBody, { where: { id: id } });
       if (!updated) {
-        return res.status(404).json({ message: 'Record not found or not updated' });
+        return ({ message: 'Record not found or not updated' });
       }
-      const updatedRecord = await this.model.findByPk(id);
-      res.json(updatedRecord);
+      // const updatedRecord = await this.model.findByPk(id);
+      // return updatedRecord;
     } catch (error) {
-      res.status(500).json({ message: 'Error updating record', error });
+      console.error({ message: 'Error updating record', error });
     }
   }
 
   // Delete By ID
-  async deleteById(req: Request, res: Response) {
-    const { id } = req.params;
-
+  async deleteById(userId: number, itemId: number) {
     try {
-      const deleted = await this.model.destroy({ where: { id } });
+      const deleted = await this.model.destroy({ where: { dealerId: userId, id: itemId }});
       if (!deleted) {
-        return res.status(404).json({ message: 'Record not found or not deleted' });
+        return ({ message: 'Record not found or not deleted' });
       }
-      res.json({ message: 'Record deleted successfully' });
+      return ({ message: 'Record deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error deleting record', error });
+      console.error({ message: 'Error deleting record', error });
     }
   }
 }

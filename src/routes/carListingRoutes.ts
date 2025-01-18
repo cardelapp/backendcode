@@ -18,5 +18,17 @@ authenticateToken,
   (req: Request, res: Response) => carListingController.createCarListing(req, res)
 );
 
+router.post('/editCarListing/:carId',
+  authenticateToken,
+  checkDealerRole,
+  (req: Request<{ carId }>, res: Response) => carListingController.editCarListing(req, res)
+)
+
+router.post('/deleteCarListing/:carId',
+  authenticateToken,
+  checkDealerRole,
+  (req: Request<{ carId }>, res: Response) => carListingController.deleteCarListing(req, res)
+)
+
 
 export default router;
