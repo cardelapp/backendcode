@@ -1,6 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db";
-import { User } from "./userModel"; // Import the User model
+import { User } from "./userModel";
 
 export class CarListing extends Model {
   public id!: number;
@@ -58,13 +58,11 @@ CarListing.init(
       allowNull: true,
     },
     fuelType: {
-      type: DataTypes.ENUM,
-      values: ['Petrol', 'Diesel', 'Electric'],
+      type: DataTypes.ENUM('Petrol', 'Diesel', 'Electric'),  // ENUM kept
       allowNull: false,
     },
     transmission: {
-      type: DataTypes.ENUM,
-      values: ['Automatic', 'Manual'],
+      type: DataTypes.ENUM('Automatic', 'Manual'),  // ENUM kept
       allowNull: false,
     },
     color: {
@@ -72,8 +70,7 @@ CarListing.init(
       allowNull: true,
     },
     condition: {
-      type: DataTypes.ENUM,
-      values: ['New', 'Used', 'Refurbished'],
+      type: DataTypes.ENUM('New', 'Used', 'Refurbished'),  // ENUM kept
       allowNull: false,
     },
     images: {
@@ -92,8 +89,7 @@ CarListing.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM,
-      values: ['Available', 'Sold','Inactive'],
+      type: DataTypes.ENUM('Available', 'Sold', 'Inactive'),  // ENUM kept
       allowNull: false,
       defaultValue: 'Available',
     },
@@ -104,8 +100,6 @@ CarListing.init(
         model: User,
         key: "id",
       },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
     },
   },
   {
@@ -115,6 +109,7 @@ CarListing.init(
   }
 );
 
+// Define Associations
 CarListing.belongsTo(User, { foreignKey: "dealerId", as: "dealer" });
 User.hasMany(CarListing, { foreignKey: "dealerId", as: "carListings" });
 

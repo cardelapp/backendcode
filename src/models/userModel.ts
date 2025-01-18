@@ -1,9 +1,8 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db";
 
-// Define the User model
 export class User extends Model {
-  public id!: number; // Primary Key (Now using number)
+  public id!: number;
   public firstname!: string;
   public lastname!: string;
   public email!: string;
@@ -15,12 +14,11 @@ export class User extends Model {
   public companyName?: string;
 }
 
-// Initialize the User model
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER, // Changed from STRING to INTEGER
-      autoIncrement: true, // Auto-increment for numeric type
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
     firstname: {
@@ -34,7 +32,7 @@ User.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: true,  // No need for a separate index definition for email
       validate: {
         isEmail: true,
       },
@@ -61,17 +59,17 @@ User.init(
     role: {
       type: DataTypes.ENUM('user', 'dealer'),
       allowNull: false,
-      defaultValue: 'user'
+      defaultValue: 'user',
     },
     companyName: {
       type: DataTypes.STRING,
-      allowNull: true
-    }
+      allowNull: true,
+    },
   },
   {
     sequelize,
-    tableName: "users", // Table name in the database
-    timestamps: true, // Adds createdAt and updatedAt timestamps
+    tableName: "users",
+    timestamps: true,
   }
 );
 
