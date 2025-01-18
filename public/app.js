@@ -88,5 +88,5 @@ Sentry.captureException(new Error("Manual test error from Sentry"));
 Sentry.setupExpressErrorHandler(app);
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     loggers_1.default.success(`API is Alive and running 🚀 on port ${port}`);
-    yield db_1.default.sync({ alter: true });
+    yield db_1.default.sync({ alter: false });
 }));

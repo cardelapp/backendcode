@@ -14,6 +14,7 @@ import carListingRoute from './routes/carListingRoutes'
 import uploadRoutes from './routes/uploadRoutes'
 import bodyParser from 'body-parser';
 
+
 dotenv.config();
 const app = express();
 const port: number = Config.serverPort 

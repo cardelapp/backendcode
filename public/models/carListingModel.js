@@ -64,8 +64,15 @@ CarListing.init({
         allowNull: false,
     },
     images: {
-        type: sequelize_1.DataTypes.JSON,
+        type: sequelize_1.DataTypes.TEXT,
         allowNull: true,
+        get() {
+            const value = this.getDataValue('images');
+            return value ? JSON.parse(value) : [];
+        },
+        set(value) {
+            this.setDataValue('images', JSON.stringify(value));
+        },
     },
     location: {
         type: sequelize_1.DataTypes.STRING,
@@ -73,7 +80,7 @@ CarListing.init({
     },
     status: {
         type: sequelize_1.DataTypes.ENUM,
-        values: ['Available', 'Sold'],
+        values: ['Available', 'Sold', 'Inactive'],
         allowNull: false,
         defaultValue: 'Available',
     },
