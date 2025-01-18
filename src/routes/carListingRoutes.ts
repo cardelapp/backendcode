@@ -1,20 +1,25 @@
 import express, { Request, Response, NextFunction } from "express";
-import { checkDealerRole } from "../middleware/usermiddleware"; 
-import { carListingController } from "../controllers/carListingController"; 
+import { checkDealerRole } from "../middleware/usermiddleware";
+import { carListingController } from "../controllers/carListingController";
 import { authenticateToken } from "../middleware";
 
 const router = express.Router();
 
 // Get all car listings (public)
 router.get('/getAllCars', (req: Request, res: Response) => {
-    carListingController.getAllCars(req, res);
+  carListingController.getAllCars(req, res);
+});
+
+// search car listings (public)
+router.get('/searchCars', (req: Request, res: Response) => {
+  carListingController.searchCars(req, res);
 });
 
 // Create a new car listing (dealers only)
 router.post(
-  '/creatCarListings', 
-authenticateToken,
-  checkDealerRole, 
+  '/creatCarListings',
+  authenticateToken,
+  checkDealerRole,
   (req: Request, res: Response) => carListingController.createCarListing(req, res)
 );
 
