@@ -22,7 +22,7 @@ router.post('/verifyotp',
     (req: Request, res: Response,next:NextFunction)=>{tokenpassword(req,res,next)},
     (req: Request, res: Response)=>{verifyopt(req,res)})
 
-router.post('/forgotpaswword',(req: Request, res: Response)=>{forgotPassword(req,res)})
+router.post('/forgotpassword',(req: Request, res: Response)=>{forgotPassword(req,res)})
 
 router.post('/changepassword',
     (req: Request, res: Response,next:NextFunction)=>{tokenpassword(req,res,next)},
