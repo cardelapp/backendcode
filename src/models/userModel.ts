@@ -32,7 +32,6 @@ User.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,  // No need for a separate index definition for email
       validate: {
         isEmail: true,
       },
@@ -68,6 +67,7 @@ User.init(
   },
   {
     sequelize,
+    paranoid: true,
     tableName: "users",
     timestamps: true,
   }

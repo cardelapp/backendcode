@@ -104,6 +104,7 @@ CarListing.init(
   },
   {
     sequelize,
+    paranoid: true,
     tableName: "carListings",
     timestamps: true,
   }

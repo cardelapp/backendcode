@@ -157,6 +157,8 @@ export const login = async (req: Request<{}, {}, LoginRequestBody>,
         email: user.email,
         firstname: user.firstname,
         lastname: user.lastname,
+        role: user.role,
+        companyName: user.companyName,
         token,
       },
     });
