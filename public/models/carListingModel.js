@@ -90,6 +90,7 @@ CarListing.init({
     },
 }, {
     sequelize: db_1.default,
+    paranoid: true,
     tableName: "carListings",
     timestamps: true,
 });

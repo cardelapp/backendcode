@@ -16,7 +16,7 @@ router.post('/register', (req, res) => { (0, authController_1.register)(req, res
 router.post('/registerDealer', authmiddleware_1.authenticateToken, (req, res) => { (0, authController_1.registerDealer)(req, res); });
 router.post('/sendotp', (req, res) => { (0, authController_1.sendotp)(req, res); });
 router.post('/verifyotp', (req, res, next) => { (0, authmiddleware_1.tokenpassword)(req, res, next); }, (req, res) => { (0, authController_1.verifyopt)(req, res); });
-router.post('/forgotpaswword', (req, res) => { (0, authController_1.forgotPassword)(req, res); });
+router.post('/forgotpassword', (req, res) => { (0, authController_1.forgotPassword)(req, res); });
 router.post('/changepassword', (req, res, next) => { (0, authmiddleware_1.tokenpassword)(req, res, next); }, (req, res) => { (0, authController_1.verifypassword)(req, res); });
 router.post('/login', (req, res) => { (0, authController_1.login)(req, res); });
 exports.default = router;

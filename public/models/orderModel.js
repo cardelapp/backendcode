@@ -49,6 +49,7 @@ Order.init({
     }
 }, {
     sequelize: db_1.default,
+    paranoid: true,
     tableName: "orders",
     timestamps: true,
 });
