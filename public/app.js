@@ -59,6 +59,7 @@ require("./models");
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const carListingRoutes_1 = __importDefault(require("./routes/carListingRoutes"));
 const uploadRoutes_1 = __importDefault(require("./routes/uploadRoutes"));
+const orderRoutes_1 = __importDefault(require("./routes/orderRoutes"));
 const body_parser_1 = __importDefault(require("body-parser"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -80,6 +81,7 @@ app.use('/auth', userRoutes_1.default);
 app.use('/carlisting', carListingRoutes_1.default);
 app.use('/upload', uploadRoutes_1.default);
 app.use('/uploads', express_1.default.static('uploads'));
+app.use('/orderpayment', orderRoutes_1.default);
 app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });

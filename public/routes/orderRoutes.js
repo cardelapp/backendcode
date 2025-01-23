@@ -8,4 +8,5 @@ const checkoutController_1 = require("../controllers/checkoutController");
 const authmiddleware_1 = require("../middleware/authmiddleware");
 const router = express_1.default.Router();
 router.post('/payments/initiate', authmiddleware_1.authenticateToken, checkoutController_1.initiatePayment); // Initiate payment
+router.post('/payments/verify', authmiddleware_1.authenticateToken, checkoutController_1.verifyPayment); // Initiate payment
 exports.default = router;
