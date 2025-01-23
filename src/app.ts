@@ -12,6 +12,7 @@ import './models'
 import authRoute from './routes/userRoutes';
 import carListingRoute from './routes/carListingRoutes'
 import uploadRoutes from './routes/uploadRoutes'
+import orderRoutes from './routes/orderRoutes'
 import bodyParser from 'body-parser';
 
 
@@ -40,6 +41,7 @@ app.use('/auth',authRoute)
 app.use('/carlisting', carListingRoute)
 app.use('/upload', uploadRoutes)
 app.use('/uploads', express.static('uploads'));
+app.use('/orderpayment',orderRoutes);
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
