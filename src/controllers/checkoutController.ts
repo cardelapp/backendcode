@@ -24,6 +24,11 @@ export const initiatePayment = async (req: Request, res: Response, next: NextFun
       return;
     }
 
+    if (carObject.status === "Sold") {
+      res.status(404).json({ message: "This car is sold out" })
+      return;
+    }
+
     // ✅ Validate User
     const user = await User.findByPk(userId);
     if (!user) {
@@ -51,7 +56,7 @@ export const initiatePayment = async (req: Request, res: Response, next: NextFun
     const { authorization_url, reference } = paystackResponseInit.data.data;
 
     // Respond with the payment URL and reference
-    res.status(200).json({ authorization_url, reference,carListingId});
+    res.status(200).json({ authorization_url, reference, carListingId });
   } catch (error) {
     res.status(500).json({ message: "Failed to initiate payment.", error: error.message });
   }
@@ -104,6 +109,9 @@ export const verifyPayment = async (req: Request, res: Response, next: NextFunct
     const { data } = paystackResponse.data;
 
     if (data.status === "success") {
+      // Update carlisting status table
+      carObject.status = "Sold"
+      await carObject.save()
       // Save payment reference in the order
       const status: string = "success";
       const order = await Order.create({
