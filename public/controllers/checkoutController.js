@@ -34,6 +34,10 @@ const initiatePayment = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             res.status(404).json({ message: "Car does not exist." });
             return;
         }
+        if (carObject.status === "Sold") {
+            res.status(404).json({ message: "This car is sold out" });
+            return;
+        }
         // ✅ Validate User
         const user = yield models_1.User.findByPk(userId);
         if (!user) {
@@ -96,6 +100,9 @@ const verifyPayment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         });
         const { data } = paystackResponse.data;
         if (data.status === "success") {
+            // Update carlisting status table
+            carObject.status = "Sold";
+            yield carObject.save();
             // Save payment reference in the order
             const status = "success";
             const order = yield models_1.Order.create({
