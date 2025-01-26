@@ -9,49 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const middleware_1 = require("../middleware");
 const models_1 = require("../models");
-const Uploadupdate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const Uploadupdate = (carId, urls) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { carId } = req.query;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id; // Fallback to undefined if no userId
-        // Check if carId is provided
-        if (!carId) {
-            res.status(400).json({ message: 'Car ID is required' });
-            return;
-        }
-        const protocol = req.protocol;
-        const host = req.get('host');
-        const baseUrl = `${protocol}://${host}/`;
-        const imagePath = baseUrl + middleware_1.uploadDir;
-        // Generate the image paths (assuming you have 4 images)
-        let images = [];
-        for (let i = 0; i < 4; i++) {
-            images.push(imagePath + '/' + userId + carId + (i + 1) + '.png');
-        }
-        // Fetch the car listing from the database
-        const carListingObject = yield models_1.CarListing.findByPk(Number(carId));
-        // Check if car listing is found
+        const carListingObject = yield models_1.CarListing.findByPk(carId);
         if (!carListingObject) {
-            res.status(404).json({ message: `Car listing with ID ${carId} not found` });
-            return;
+            throw new Error(`Car listing with ID ${carId} not found`);
         }
-        console.log(images);
-        // Combine the car listing object with the images array
-        const combinedObject = Object.assign(Object.assign({}, carListingObject.toJSON()), { images });
-        // Update the car listing in the database
+        const combinedObject = Object.assign(Object.assign({}, carListingObject.toJSON()), { images: urls });
         yield models_1.CarListing.update(combinedObject, { where: { id: carId } });
-        // Return success message
-        res.status(200).json({
-            message: 'Images uploaded successfully',
-            carListing: combinedObject,
-        });
+        return { carId, urls };
     }
     catch (error) {
-        // Handle errors
-        console.error(error);
-        res.status(500).json({ message: 'An error occurred while updating the car listing', error: error.message });
+        console.error(`Error updating car listing: ${error.message}`);
+        throw new Error(`An error occurred while updating the car listing: ${error.message}`);
     }
 });
 exports.default = Uploadupdate;

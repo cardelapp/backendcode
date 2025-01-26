@@ -32,47 +32,35 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleUploadError = exports.uploadCarImages = exports.uploadDir = void 0;
+exports.handleUploadError = exports.handleUploadToSupabase = exports.uploadCarImages = void 0;
 const multer_1 = __importStar(require("multer"));
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
-// Ensure the uploads/cars directory exists
-exports.uploadDir = 'uploads/cars';
-if (!fs_1.default.existsSync(exports.uploadDir)) {
-    fs_1.default.mkdirSync(exports.uploadDir, { recursive: true });
-}
-// Configure storage for multer
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, exports.uploadDir); // Upload directory
-    },
-    filename: (req, file, cb) => {
-        var _a;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id; // Fallback to '0' if no userId
-        const carId = req.query.carId || '0'; // Get carId from query parameter, default to '0' if not found
-        const ext = '.png'; // Set all files to have a '.png' extension
-        // Safely check if req.files exists and find the index
-        let fileIndex = 1; // Default to 1
-        if (Array.isArray(req.files)) {
-            // Ensure that we correctly track the index for every file in the array
-            fileIndex = req.files.length; // The new file will have an index based on the array length
-        }
-        // Construct the filename: userId + carId + fileIndex
-        const filename = `${userId}${carId}${fileIndex}${ext}`;
-        cb(null, filename);
-    }
-});
-// Multer upload handler for multiple files
+const supabase_js_1 = require("@supabase/supabase-js");
+const uploadController_1 = __importDefault(require("../controllers/uploadController"));
+// Supabase Configuration
+const supabaseUrl = process.env.SUPERBASE_URL; // Replace with your Supabase URL
+const supabaseAnonKey = process.env.SUPERBASE_KEY; // Replace with your Supabase Anon Key
+const supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseAnonKey);
+// Configure multer (in-memory storage)
+const storage = multer_1.default.memoryStorage();
 exports.uploadCarImages = (0, multer_1.default)({
     storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit per image
     fileFilter: (req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png/;
-        const extName = allowedTypes.test(path_1.default.extname(file.originalname).toLowerCase());
+        const extName = allowedTypes.test(file.originalname.toLowerCase());
         const mimeType = allowedTypes.test(file.mimetype);
         if (extName && mimeType) {
             cb(null, true);
@@ -80,9 +68,64 @@ exports.uploadCarImages = (0, multer_1.default)({
         else {
             cb(new Error('Only JPEG, JPG, and PNG images are allowed'));
         }
-    }
+    },
 }).array('carImages', 4); // Max 4 images
-// Error-handling middleware for multer
+// Upload images to Supabase Storage and update the database
+const handleUploadToSupabase = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const files = req.files;
+        if (!files || files.length === 0) {
+            res.status(400).json({ message: 'No files uploaded' });
+            return;
+        }
+        // Ensure carId is provided
+        const carId = req.query.carId;
+        if (!carId) {
+            res.status(400).json({ message: 'Car ID is required' });
+            return;
+        }
+        const userId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || '0'; // Fallback user ID
+        const bucketName = 'myupload'; // Supabase bucket name
+        const uploadedFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = `${userId}_${carId}_${Date.now()}_${i}.png`; // Unique file name
+            // Upload to Supabase Storage
+            const { data, error } = yield supabase.storage
+                .from(bucketName)
+                .upload(fileName, file.buffer, { contentType: file.mimetype });
+            if (error) {
+                throw new Error(`Error uploading file ${file.originalname}: ${error.message}`);
+            }
+            // Generate public URL
+            const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+            if (publicUrlData === null || publicUrlData === void 0 ? void 0 : publicUrlData.publicUrl) {
+                uploadedFiles.push(publicUrlData.publicUrl);
+            }
+        }
+        // Update database with uploaded image URLs
+        try {
+            const result = yield (0, uploadController_1.default)(Number(carId), uploadedFiles);
+            res.status(200).json({
+                message: 'Files uploaded and database updated successfully',
+                uploadedFiles,
+                dbResult: result,
+            });
+        }
+        catch (dbError) {
+            res.status(500).json({
+                message: 'Files uploaded but failed to update the database',
+                error: dbError.message,
+            });
+        }
+    }
+    catch (err) {
+        next(err); // Pass errors to the error-handling middleware
+    }
+});
+exports.handleUploadToSupabase = handleUploadToSupabase;
+// Error-handling middleware
 const handleUploadError = (err, req, res, next) => {
     if (err instanceof multer_1.MulterError) {
         res.status(400).json({ message: `Multer Error: ${err.message}` });
