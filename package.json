@@ -25,6 +25,7 @@
     "dependencies": {
         "@sentry/node": "^8.46.0",
         "@sentry/profiling-node": "^8.46.0",
+        "@supabase/supabase-js": "^2.48.1",
         "@types/jsonwebtoken": "^9.0.7",
         "axios": "^1.7.9",
         "bcryptjs": "^2.4.3",

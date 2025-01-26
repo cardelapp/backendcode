@@ -1,44 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 import multer, { FileFilterCallback, MulterError } from 'multer';
-import path from 'path';
-import fs from 'fs';
+import { createClient } from '@supabase/supabase-js';
+import Uploadupdate from '../controllers/uploadController';
 
-// Ensure the uploads/cars directory exists
-export const uploadDir = 'uploads/cars';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Supabase Configuration
+const supabaseUrl = process.env.SUPERBASE_URL; // Replace with your Supabase URL
+const supabaseAnonKey = process.env.SUPERBASE_KEY; // Replace with your Supabase Anon Key
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Configure storage for multer
-const storage = multer.diskStorage({
-  destination: (req: Request, file: Express.Multer.File, cb) => {
-    cb(null, uploadDir);  // Upload directory
-  },
-  filename: (req: Request, file: Express.Multer.File, cb) => {
-    const userId = req.user?.id;  // Fallback to '0' if no userId
-    const carId = req.query.carId || '0';  // Get carId from query parameter, default to '0' if not found
-    const ext = '.png';  // Set all files to have a '.png' extension
+// Configure multer (in-memory storage)
+const storage = multer.memoryStorage();
 
-    // Safely check if req.files exists and find the index
-    let fileIndex = 1; // Default to 1
-    if (Array.isArray(req.files)) {
-      // Ensure that we correctly track the index for every file in the array
-      fileIndex = req.files.length ;  // The new file will have an index based on the array length
-    }
-
-    // Construct the filename: userId + carId + fileIndex
-    const filename = `${userId}${carId}${fileIndex}${ext}`;
-    cb(null, filename);
-  }
-});
-
-// Multer upload handler for multiple files
 export const uploadCarImages = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },  // 5MB limit per image
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit per image
   fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const allowedTypes = /jpeg|jpg|png/;
-    const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extName = allowedTypes.test(file.originalname.toLowerCase());
     const mimeType = allowedTypes.test(file.mimetype);
 
     if (extName && mimeType) {
@@ -46,10 +24,70 @@ export const uploadCarImages = multer({
     } else {
       cb(new Error('Only JPEG, JPG, and PNG images are allowed'));
     }
-  }
-}).array('carImages', 4);  // Max 4 images
+  },
+}).array('carImages', 4); // Max 4 images
 
-// Error-handling middleware for multer
+// Upload images to Supabase Storage and update the database
+export const handleUploadToSupabase = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      res.status(400).json({ message: 'No files uploaded' });
+      return 
+    }
+
+    // Ensure carId is provided
+    const carId = req.query.carId;
+    if (!carId) {
+      res.status(400).json({ message: 'Car ID is required' });
+      return 
+    }
+
+    const userId = req.user?.id || '0'; // Fallback user ID
+    const bucketName = 'myupload'; // Supabase bucket name
+    const uploadedFiles: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = `${userId}_${carId}_${Date.now()}_${i}.png`; // Unique file name
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from(bucketName)
+        .upload(fileName, file.buffer, { contentType: file.mimetype });
+
+      if (error) {
+        throw new Error(`Error uploading file ${file.originalname}: ${error.message}`);
+      }
+
+      // Generate public URL
+      const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+      if (publicUrlData?.publicUrl) {
+        uploadedFiles.push(publicUrlData.publicUrl);
+      }
+    }
+
+    // Update database with uploaded image URLs
+    try {
+      const result = await Uploadupdate(Number(carId), uploadedFiles);
+      res.status(200).json({
+        message: 'Files uploaded and database updated successfully',
+        uploadedFiles,
+        dbResult: result,
+      });
+    } catch (dbError: any) {
+      res.status(500).json({
+        message: 'Files uploaded but failed to update the database',
+        error: dbError.message,
+      });
+    }
+  } catch (err) {
+    next(err); // Pass errors to the error-handling middleware
+  }
+};
+
+
+// Error-handling middleware
 export const handleUploadError = (err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof MulterError) {
     res.status(400).json({ message: `Multer Error: ${err.message}` });
